@@ -6,7 +6,11 @@ export class GitHubHomePage extends BasePage {
     super(page);
   }
 
-  async open(): Promise<void> {
-    await this.navigateTo('/');
+  async searchRepository(repository: string) {
+    await this.page.getByRole('button', { name: /Search or jump to/i }).click();
+    const searchBox = this.page.getByRole('combobox', { name: /Search or jump to/i });
+    await searchBox.waitFor({ state: 'visible', timeout: 10_000 });
+    await searchBox.fill(repository);
+    await this.page.keyboard.press('Enter');
   }
 }
