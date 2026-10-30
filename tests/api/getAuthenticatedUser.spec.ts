@@ -1,27 +1,24 @@
-﻿import { test, expect, request as apiRequestFactory } from '@playwright/test';
+import { expect, request, test } from '@playwright/test';
+
+import { env } from '../../src/config/env';
 import { GitHubService } from '../../src/services/GitHubService';
 
 test('Get authenticated GitHub user', async () => {
-    const apiRequest = await apiRequestFactory.newContext({
-        baseURL: 'https://api.github.com',
-        ignoreHTTPSErrors: true,
-        extraHTTPHeaders: {
-            Accept: 'application/vnd.github+json',
-            ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
-        },
-    });
+  const apiRequest = await request.newContext({
+    baseURL: env.apiBaseUrl,
+  });
 
-    const service = new GitHubService(apiRequest);
+  const gitHubService = new GitHubService(apiRequest);
 
-    try {
-        const response = await service.getAuthenticatedUser();
+  try {
+    const response = await gitHubService.getAuthenticatedUser();
 
-        expect(response.status()).toBe(200);
+    expect(response.status()).toBe(200);
 
-        const user = await response.json();
-        expect(user.login).toBeTruthy();
-        expect(user.id).toBeTruthy();
-    } finally {
-        await apiRequest.dispose();
-    }
+    const user = await response.json();
+    expect(user.login).toBeTruthy();
+    expect(user.id).toBeTruthy();
+  } finally {
+    await apiRequest.dispose();
+  }
 });

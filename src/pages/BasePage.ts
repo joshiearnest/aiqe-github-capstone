@@ -1,6 +1,15 @@
 import { Page } from '@playwright/test';
 
-export class BasePage {
+import { env } from '../config/env';
+
+export const githubConfig = { 
+  baseUrl: env.baseUrl,
+  owner: env.owner,
+  repo: env.repo,
+  filterRepo: env.filterRepo,
+};
+
+export class BasePage { 
   constructor(protected page: Page) {}
 
   async navigateTo(url: string): Promise<void> {

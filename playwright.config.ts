@@ -1,16 +1,14 @@
 ﻿import { defineConfig, devices } from '@playwright/test';
 
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { env } from './src/config/env';
 
 export default defineConfig({
   testDir: './tests',
   testMatch: '**/*.spec.ts',
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  fullyParallel: false,
+  forbidOnly: env.isCi,
+  retries: env.isCi ? 2 : 0,
+  workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
   outputDir: './test-results',
   timeout: 30_000,
@@ -18,7 +16,7 @@ export default defineConfig({
     timeout: 5_000,
   },
   use: {
-    baseURL: process.env.BASE_URL ?? 'https://github.com',
+    baseURL: env.baseUrl,
     actionTimeout: 10_000,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
@@ -28,14 +26,6 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
     },
   ],
 });

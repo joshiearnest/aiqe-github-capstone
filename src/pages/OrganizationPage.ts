@@ -1,25 +1,29 @@
-import { Page } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { Locator, Page } from '@playwright/test';
+import { BasePage, githubConfig } from './BasePage';
 
 export class OrganizationPage extends BasePage {
-    constructor(page: Page) {
-        super(page);
-    }
+  private readonly repositoriesLink: Locator;
+  private readonly searchBox: Locator;
+  private readonly repositoryLink: Locator;
 
-    async openRepositories() {
-        const reposLink = this.page.locator('a[href="/orgs/microsoft/repositories"]').first();
-        await reposLink.waitFor({ state: 'visible', timeout: 10_000 });
-        await reposLink.click();
-    }
+  constructor(page: Page) {
+    super(page);
+    this.repositoriesLink = page.locator(`a[href="/orgs/${githubConfig.owner}/repositories"]`).first();
+    this.searchBox = page.getByPlaceholder('Search repositories');
+    this.repositoryLink = page.getByRole('link');
+  }
 
-    async searchRepository(repoName: string) {
-        const searchBox = this.page.getByPlaceholder('Search repositories');
-        await searchBox.waitFor({ state: 'visible', timeout: 10_000 });
-        await searchBox.fill(repoName);
-    }
-    async isRepositoryVisible(repositoryName: string) {
-        return this.page.getByRole('link', {
-            name: repositoryName
-        });
-    }
+  async openRepositories(): Promise<void> {
+    await this.repositoriesLink.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.repositoriesLink.click();
+  }
+
+  async searchRepository(repoName: string): Promise<void> {
+    await this.searchBox.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.searchBox.fill(repoName);
+  }
+
+  async isRepositoryVisible(repositoryName: string): Promise<Locator> {
+    return this.repositoryLink.filter({ hasText: repositoryName });
+  }
 }

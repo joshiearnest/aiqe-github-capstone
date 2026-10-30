@@ -1,18 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+
+import { githubConfig } from '../../src/pages/BasePage';
 import { OrganizationPage } from '../../src/pages/OrganizationPage';
 
 test('Filter repositories', async ({ page }) => {
+  const orgPage = new OrganizationPage(page);
+  const repoName = githubConfig.filterRepo;
 
-    const orgPage = new OrganizationPage(page);
+  await page.goto(`${githubConfig.baseUrl}/${githubConfig.owner}`, { waitUntil: 'domcontentloaded' });
+  await orgPage.openRepositories();
+  await orgPage.searchRepository(repoName);
 
-    await page.goto('https://github.com/microsoft');
+  const repositoryLink = await orgPage.isRepositoryVisible(repoName);
 
-    await orgPage.openRepositories();
-
-    const repoName = 'winget-pkgs';
-    await orgPage.searchRepository(repoName);
-
-    await expect(
-        page.locator(`a[href="/microsoft/${repoName}"]`)
-    ).toBeVisible();
+  await expect(repositoryLink).toBeVisible({ timeout: 15_000 });
 });

@@ -1,24 +1,17 @@
-Tests │ ▼ Page Objects │ ▼ BasePage │ ▼ Playwright Engine │ ▼ GitHub
+Tests │ ├── UI Tests │ └── Page Objects │ └── BasePage │ ├── API Tests │ └── GitHubService │ └── Integrated Tests └── UI + API
 
-BasePage Responsibilities:
-Navigation
-Shared methods
+Components
+BasePage
+Shared browser functionality.
 
-GitHubHomePage Responsibilities:
-Search repository
+GitHubHomePage
+Repository search functionality.
 
-RepositoryPage Responsibilities:
-Repository validations
+RepositoryPage
+Repository validation and navigation.
 
-Future Components
+OrganizationPage
+Repository filtering.
+
 GitHubService
-Test Data
-Fixtures
-
-Current Methods
-
-getRepositoryName()
-getRepositoryOwner()
-openIssues()
-openPullRequests()
-Purpose: Encapsulates repository-specific interactions and validations.
+GitHub API communication layer.
